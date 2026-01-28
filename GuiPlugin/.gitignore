@@ -1,0 +1,43 @@
+# Compiled output
+/target/
+/build/
+/bin/
+out/
+
+# JAR files
+*.jar
+
+# Minecraft/Paper specific
+.paper-remapped/
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.classpath
+.project
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
+
+# Server specific (if you put server files in same repo)
+plugins/
+!src/main/resources/plugin.yml
+cache/
+world/
+world_nether/
+world_the_end/
+logs/
