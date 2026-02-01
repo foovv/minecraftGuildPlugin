@@ -1,0 +1,4 @@
+/home/f/Desktop/mc-server/plugins-source/StoneDropPlugin/src/main/java/pl/stonedrop/commands/DropCommand.java
+/home/f/Desktop/mc-server/plugins-source/StoneDropPlugin/src/main/java/pl/stonedrop/listeners/GuiListener.java
+/home/f/Desktop/mc-server/plugins-source/StoneDropPlugin/src/main/java/pl/stonedrop/listeners/BlockBreakListener.java
+/home/f/Desktop/mc-server/plugins-source/StoneDropPlugin/src/main/java/pl/stonedrop/StoneDropPlugin.java

@@ -1,0 +1,12 @@
+name: GildiePlugin
+version: 1.0
+main: pl.gildie.GildiePlugin
+api-version: 1.13
+commands:
+  g:
+    description: Glowna komenda gildii
+    aliases: [gildia, gildie]
+permissions:
+  gildie.use:
+    description: Pozwala uzywac komend gildii
+    default: true
