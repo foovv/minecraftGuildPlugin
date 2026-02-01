@@ -1,0 +1,8 @@
+name: StoneDropPlugin
+version: 1.0
+main: pl.stonedrop.StoneDropPlugin
+api-version: 1.21
+commands:
+  drop:
+    description: Opens the drop menu.
+    usage: /drop
