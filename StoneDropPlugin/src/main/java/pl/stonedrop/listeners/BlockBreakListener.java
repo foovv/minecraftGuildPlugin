@@ -2,6 +2,7 @@ package pl.stonedrop.listeners;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -35,25 +36,53 @@ public class BlockBreakListener implements Listener {
             // Prevent natural cobblestone drop
             event.setDropItems(false);
 
+            // Get Fortune level from player's tool
+            int fortuneLevel = 0;
+            ItemStack tool = player.getInventory().getItemInMainHand();
+            if (tool != null && tool.hasItemMeta()) {
+                fortuneLevel = tool.getEnchantmentLevel(Enchantment.FORTUNE);
+            }
+
             // Roll for Iron Ore (2%)
             if (random.nextDouble() * 100 <= 2.0) {
-                ItemStack iron = new ItemStack(Material.IRON_ORE);
+                int amount = calculateDropAmount(fortuneLevel);
+                ItemStack iron = new ItemStack(Material.IRON_ORE, amount);
                 java.util.Map<Integer, ItemStack> leftover = player.getInventory().addItem(iron);
                 if (!leftover.isEmpty()) {
-                    block.getWorld().dropItemNaturally(block.getLocation(), iron);
+                    for (ItemStack left : leftover.values()) {
+                        block.getWorld().dropItemNaturally(block.getLocation(), left);
+                    }
                 }
-                player.sendMessage("§7[§6Drop§7] §aTrafiles na Rude Zelaza! (2%) §7(Trafia do EQ)");
+                player.sendMessage("§7[§6Drop§7] §fRuda Zelaza §7x" + amount);
             }
 
             // Roll for Gold Ore (1%)
             if (random.nextDouble() * 100 <= 1.0) {
-                ItemStack gold = new ItemStack(Material.GOLD_ORE);
+                int amount = calculateDropAmount(fortuneLevel);
+                ItemStack gold = new ItemStack(Material.GOLD_ORE, amount);
                 java.util.Map<Integer, ItemStack> leftover = player.getInventory().addItem(gold);
                 if (!leftover.isEmpty()) {
-                    block.getWorld().dropItemNaturally(block.getLocation(), gold);
+                    for (ItemStack left : leftover.values()) {
+                        block.getWorld().dropItemNaturally(block.getLocation(), left);
+                    }
                 }
-                player.sendMessage("§7[§6Drop§7] §eTrafiles na Rude Zlota! (1%) §7(Trafia do EQ)");
+                player.sendMessage("§7[§6Drop§7] §eRuda Zlota §7x" + amount);
             }
         }
+    }
+
+    /**
+     * Calculate drop amount based on Fortune level.
+     * Fortune 0: always 1
+     * Fortune 1: 1-2
+     * Fortune 2: 1-3
+     * Fortune 3: 1-5 (max)
+     */
+    private int calculateDropAmount(int fortuneLevel) {
+        if (fortuneLevel <= 0) {
+            return 1;
+        }
+        int maxAmount = Math.min(1 + fortuneLevel + (fortuneLevel >= 3 ? 1 : 0), 5);
+        return random.nextInt(maxAmount) + 1;
     }
 }

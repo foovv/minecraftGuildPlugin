@@ -29,7 +29,7 @@ public class RegionListener implements Listener {
         if (guild != null) {
             if (!guild.getOwner().equals(player.getUniqueId())) {
                 event.setCancelled(true);
-                player.sendMessage(ChatColor.RED + "To teren gildii " + guild.getTag());
+                player.sendMessage(ChatColor.RED + "To teren wrogiej gildii: [" + guild.getTag() + "]");
                 return;
             }
         }
@@ -53,7 +53,7 @@ public class RegionListener implements Listener {
         if (guild != null) {
             if (!guild.getOwner().equals(player.getUniqueId())) {
                 event.setCancelled(true);
-                player.sendMessage(ChatColor.RED + "To teren gildii " + guild.getTag());
+                player.sendMessage(ChatColor.RED + "To teren wrogiej gildii: [" + guild.getTag() + "]");
             }
         }
     }
