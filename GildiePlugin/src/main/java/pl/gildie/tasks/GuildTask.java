@@ -47,7 +47,11 @@ public class GuildTask extends BukkitRunnable {
                     bar = Bukkit.createBossBar(targetTitle, targetColor, BarStyle.SOLID);
                     bar.addPlayer(player);
                     activeBars.put(player.getUniqueId(), bar);
-                    player.sendMessage(org.bukkit.ChatColor.GREEN + "Wkroczyles na teren gildii " + targetTitle);
+                    if (guild.isMember(player.getUniqueId())) {
+                        player.sendMessage(org.bukkit.ChatColor.GREEN + "Wkroczyles na teren swojej gildii");
+                    } else {
+                        player.sendMessage(org.bukkit.ChatColor.RED + "To teren wrogiej gildii: [" + guild.getTag() + "]");
+                    }
                 } else {
                     // Update color if needed
                     if (bar.getColor() != targetColor) {
@@ -57,7 +61,11 @@ public class GuildTask extends BukkitRunnable {
                     if (!bar.getTitle().equals(targetTitle)) {
                         player.sendMessage(org.bukkit.ChatColor.RED + "Opusciles teren gildii " + bar.getTitle());
                         bar.setTitle(targetTitle);
-                        player.sendMessage(org.bukkit.ChatColor.GREEN + "Wkroczyles na teren gildii " + targetTitle);
+                        if (guild.isMember(player.getUniqueId())) {
+                            player.sendMessage(org.bukkit.ChatColor.GREEN + "Wkroczyles na teren swojej gildii");
+                        } else {
+                            player.sendMessage(org.bukkit.ChatColor.RED + "To teren wrogiej gildii: [" + guild.getTag() + "]");
+                        }
                     }
                 }
                 

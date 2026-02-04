@@ -11,6 +11,7 @@ CLASSPATH="$CLASSPATH:/home/f/Desktop/mc-server/libraries/net/kyori/adventure-ke
 CLASSPATH="$CLASSPATH:/home/f/Desktop/mc-server/libraries/net/kyori/adventure-text-serializer-plain/4.25.0/adventure-text-serializer-plain-4.25.0.jar"
 CLASSPATH="$CLASSPATH:/home/f/Desktop/mc-server/libraries/net/kyori/adventure-text-serializer-legacy/4.25.0/adventure-text-serializer-legacy-4.25.0.jar"
 CLASSPATH="$CLASSPATH:/home/f/Desktop/mc-server/libraries/net/md-5/bungeecord-chat/1.21-R0.2-deprecated+build.21/bungeecord-chat-1.21-R0.2-deprecated+build.21.jar"
+CLASSPATH="$CLASSPATH:/home/f/Desktop/mc-server/libraries/net/kyori/examination-api/1.3.0/examination-api-1.3.0.jar"
 
 
 SRC_DIR="/home/f/Desktop/mc-server/plugins-source/GildiePlugin/src"

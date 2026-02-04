@@ -30,13 +30,10 @@ public class DropCommand implements CommandExecutor {
         Inventory inv = Bukkit.createInventory(null, 27, "§6Drop z kamienia");
 
         // Iron Ore
-        inv.setItem(11, createGuiItem(Material.IRON_ORE, "§7Ruda Zelaza", "§eSzansa: §a2%"));
+        inv.setItem(12, createGuiItem(Material.IRON_ORE, "§fRuda Zelaza", "§eSzansa: §a2%"));
         
         // Gold Ore
-        inv.setItem(13, createGuiItem(Material.GOLD_ORE, "§6Ruda Zlota", "§eSzansa: §a1%"));
-        
-        // Experience
-        inv.setItem(15, createGuiItem(Material.EXPERIENCE_BOTTLE, "§dDoswiadczenie", "§eSzansa: §a100%", "§7Wypada z kazdego bloku kamienia."));
+        inv.setItem(14, createGuiItem(Material.GOLD_ORE, "§6Ruda Zlota", "§eSzansa: §a1%"));
 
         player.openInventory(inv);
     }

@@ -107,8 +107,13 @@ public class GuildManager {
         private String name;
         private UUID owner;
         private List<UUID> members;
+        private List<UUID> deputies;
         private double x, y, z;
         private String world;
+        // Home location (defaults to heart location if not set)
+        private Double homeX, homeY, homeZ;
+        // Guild PvP toggle (friendly fire without damage/antilogout)
+        private boolean pvpEnabled = false;
 
         public Guild(String tag, String name, UUID owner, Location center) {
             this.tag = tag;
@@ -116,10 +121,30 @@ public class GuildManager {
             this.owner = owner;
             this.members = new ArrayList<>();
             this.members.add(owner);
+            this.deputies = new ArrayList<>();
             this.x = center.getX();
             this.y = center.getY();
             this.z = center.getZ();
             this.world = center.getWorld().getName();
+            // Home defaults to heart (Y=36, one block above sponge)
+            this.homeX = null;
+            this.homeY = null;
+            this.homeZ = null;
+        }
+        
+        public Location getHome() {
+            World w = Bukkit.getWorld(world);
+            if (homeX != null && homeY != null && homeZ != null) {
+                return new Location(w, homeX, homeY, homeZ);
+            }
+            // Default: heart location (Y=36, above sponge at Y=35)
+            return new Location(w, x, 36, z);
+        }
+        
+        public void setHome(Location loc) {
+            this.homeX = loc.getX();
+            this.homeY = loc.getY();
+            this.homeZ = loc.getZ();
         }
         
         public boolean isInside(Location loc) {
@@ -159,9 +184,31 @@ public class GuildManager {
              }
             return members;
         }
+
+        public List<UUID> getDeputies() {
+            if (deputies == null) deputies = new ArrayList<>();
+            return deputies;
+        }
+
+        public boolean isDeputy(UUID uuid) {
+            return getDeputies().contains(uuid);
+        }
+
+        public void addDeputy(UUID uuid) {
+            if (!getDeputies().contains(uuid)) {
+                getDeputies().add(uuid);
+            }
+        }
+
+        public void removeDeputy(UUID uuid) {
+            getDeputies().remove(uuid);
+        }
         
         public String getTag() { return tag; }
         public String getName() { return name; }
+
+        public boolean isPvpEnabled() { return pvpEnabled; }
+        public void togglePvp() { this.pvpEnabled = !this.pvpEnabled; }
 
         public void addMember(UUID uuid) {
             getMembers().add(uuid);
@@ -169,6 +216,8 @@ public class GuildManager {
 
         public void removeMember(UUID uuid) {
             getMembers().remove(uuid);
+            // Also remove from deputies if they were one
+            removeDeputy(uuid);
         }
 
         public boolean isMember(UUID uuid) {

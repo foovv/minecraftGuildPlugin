@@ -12,11 +12,15 @@ import pl.gildie.GildiePlugin;
 import pl.gildie.managers.GuildManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class GuildCommand implements CommandExecutor {
 
     private final GildiePlugin plugin;
+    private final Map<UUID, Integer> pendingTeleports = new HashMap<>();
 
     public GuildCommand(GildiePlugin plugin) {
         this.plugin = plugin;
@@ -104,13 +108,36 @@ public class GuildCommand implements CommandExecutor {
             return true;
         }
 
+        if (args[0].equalsIgnoreCase("dom")) {
+            teleportHome(player);
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("ustawdom")) {
+            setHome(player);
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("zastepca")) {
+            if (args.length < 2) {
+                player.sendMessage(ChatColor.RED + "Poprawne uzycie: /g zastepca <NICK>");
+                return true;
+            }
+            assignDeputy(player, args[1]);
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("pvp")) {
+            toggleGuildPvp(player);
+            return true;
+        }
+
         sendHelp(player);
         return true;
     }
 
     private void sendHelp(Player player) {
         player.sendMessage(ChatColor.GOLD + "========== " + ChatColor.YELLOW + "GILDIE" + ChatColor.GOLD + " ==========");
-        player.sendMessage(ChatColor.YELLOW + "/g " + ChatColor.GRAY + "- wyswietla pomoc");
         player.sendMessage(ChatColor.YELLOW + "/g itemy " + ChatColor.GRAY + "- pokazuje wymagane itemy");
         player.sendMessage(ChatColor.YELLOW + "/g zaloz <TAG> <NAZWA> " + ChatColor.GRAY + "- zakłada gildię");
         player.sendMessage(ChatColor.YELLOW + "/g info <TAG> " + ChatColor.GRAY + "- informacje o gildii");
@@ -120,6 +147,10 @@ public class GuildCommand implements CommandExecutor {
         player.sendMessage(ChatColor.YELLOW + "/g opusc " + ChatColor.GRAY + "- opuszcza gildię");
         player.sendMessage(ChatColor.YELLOW + "/g usun " + ChatColor.GRAY + "- usuwa gildię (tylko lider)");
         player.sendMessage(ChatColor.YELLOW + "/g potwierdz " + ChatColor.GRAY + "- potwierdza usuniecie gildii");
+        player.sendMessage(ChatColor.YELLOW + "/g dom " + ChatColor.GRAY + "- teleportuje do domu gildii");
+        player.sendMessage(ChatColor.YELLOW + "/g ustawdom " + ChatColor.GRAY + "- ustawia dom gildii (lider)");
+        player.sendMessage(ChatColor.YELLOW + "/g zastepca <NICK> " + ChatColor.GRAY + "- nadaje/odbiera zastepce (lider)");
+        player.sendMessage(ChatColor.YELLOW + "/g pvp " + ChatColor.GRAY + "- wlacza/wylacza PvP w gildii (lider)");
     }
 
     private void showGuildInfo(Player player, String tag) {
@@ -135,6 +166,16 @@ public class GuildCommand implements CommandExecutor {
         player.sendMessage(ChatColor.GOLD + "Gildia: " + ChatColor.YELLOW + guild.getTag() + " - " + guild.getName());
         player.sendMessage(ChatColor.GOLD + "Lider: " + ChatColor.WHITE + org.bukkit.Bukkit.getOfflinePlayer(guild.getOwner()).getName());
         
+        List<UUID> deputyIds = guild.getDeputies();
+        if (!deputyIds.isEmpty()) {
+            StringBuilder deputies = new StringBuilder();
+            for (UUID deputyId : deputyIds) {
+                deputies.append(org.bukkit.Bukkit.getOfflinePlayer(deputyId).getName()).append(", ");
+            }
+            if (deputies.length() > 0) deputies.setLength(deputies.length() - 2);
+            player.sendMessage(ChatColor.GOLD + "Zastepcy: " + ChatColor.WHITE + deputies.toString());
+        }
+
         StringBuilder members = new StringBuilder();
         for (java.util.UUID memberId : guild.getMembers()) {
             members.append(org.bukkit.Bukkit.getOfflinePlayer(memberId).getName()).append(", ");
@@ -142,7 +183,7 @@ public class GuildCommand implements CommandExecutor {
         if (members.length() > 0) members.setLength(members.length() - 2);
 
         player.sendMessage(ChatColor.GOLD + "Członkowie: " + ChatColor.WHITE + members.toString());
-        player.sendMessage(ChatColor.GOLD + "Liczba członków: " + ChatColor.WHITE + guild.getMembers().size());
+        player.sendMessage(ChatColor.GOLD + "Liczba członków: " + ChatColor.WHITE + guild.getMembers().size() + "/10");
         player.sendMessage(ChatColor.DARK_GRAY + "--------------------------------");
     }
 
@@ -236,6 +277,11 @@ public class GuildCommand implements CommandExecutor {
             player.sendMessage(ChatColor.RED + "Nie jestes liderem zadnej gildii!");
             return;
         }
+
+        if (guild.getMembers().size() >= 10) {
+            player.sendMessage(ChatColor.RED + "Gildia jest pelna! (Limit: 10 czlonkow)");
+            return;
+        }
         
         if (gm.getGuildByMember(target.getUniqueId()) != null) {
             player.sendMessage(ChatColor.RED + "Gracz posiada juz gildie!");
@@ -267,6 +313,12 @@ public class GuildCommand implements CommandExecutor {
         if (gm.getGuildByMember(player.getUniqueId()) != null) {
             player.sendMessage(ChatColor.RED + "Masz juz gildie!");
              gm.removeInvite(player.getUniqueId());
+            return;
+        }
+
+        if (guild.getMembers().size() >= 10) {
+            player.sendMessage(ChatColor.RED + "Gildia jest pelna! Nie mozesz do niej dolaczyc.");
+            gm.removeInvite(player.getUniqueId());
             return;
         }
         
@@ -400,5 +452,159 @@ public class GuildCommand implements CommandExecutor {
         
         player.sendMessage(ChatColor.GREEN + "Gildia zostala usunieta!");
         org.bukkit.Bukkit.broadcastMessage(ChatColor.RED + "Gildia " + guild.getTag() + " zostala rozwiazana przez " + player.getName() + "!");
+    }
+
+    private void teleportHome(Player player) {
+        GuildManager gm = plugin.getGuildManager();
+        GuildManager.Guild playerGuild = gm.getGuildByMember(player.getUniqueId());
+        
+        if (playerGuild == null) {
+            player.sendMessage(ChatColor.RED + "Nie posiadasz gildii!");
+            return;
+        }
+        
+        // Cancel existing teleport if any
+        if (pendingTeleports.containsKey(player.getUniqueId())) {
+            org.bukkit.Bukkit.getScheduler().cancelTask(pendingTeleports.get(player.getUniqueId()));
+            pendingTeleports.remove(player.getUniqueId());
+        }
+        
+        // Check if player is on enemy territory
+        GuildManager.Guild guildAtLocation = gm.getGuildAt(player.getLocation());
+        boolean onEnemyTerritory = guildAtLocation != null && !guildAtLocation.isMember(player.getUniqueId());
+        
+        int delay = onEnemyTerritory ? 30 : 10; // seconds
+        
+        if (onEnemyTerritory) {
+            player.sendMessage(ChatColor.RED + "Jestes na terenie wrogiej gildii! Teleportacja za " + delay + " sekund...");
+        } else {
+            player.sendMessage(ChatColor.GREEN + "Teleportacja do domu gildii za " + delay + " sekund...");
+        }
+        player.sendMessage(ChatColor.GRAY + "Nie ruszaj sie!");
+        
+        Location startLoc = player.getLocation().clone();
+        Location targetLoc = playerGuild.getHome();
+        
+        int taskId = org.bukkit.Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            pendingTeleports.remove(player.getUniqueId());
+            
+            // Check if player moved
+            if (player.getLocation().distanceSquared(startLoc) > 1) {
+                player.sendMessage(ChatColor.RED + "Teleportacja anulowana - ruszyles sie!");
+                return;
+            }
+            
+            player.teleport(targetLoc);
+            player.sendMessage(ChatColor.GREEN + "Zostales przeteleportowany do domu gildii!");
+        }, delay * 20L); // 20 ticks per second
+        
+        pendingTeleports.put(player.getUniqueId(), taskId);
+    }
+
+    private void setHome(Player player) {
+        GuildManager gm = plugin.getGuildManager();
+        GuildManager.Guild guild = gm.getGuildByMember(player.getUniqueId());
+        
+        if (guild == null) {
+            player.sendMessage(ChatColor.RED + "Nie posiadasz gildii!");
+            return;
+        }
+        
+        if (!guild.getOwner().equals(player.getUniqueId())) {
+            player.sendMessage(ChatColor.RED + "Tylko lider moze ustawic dom gildii!");
+            return;
+        }
+        
+        // Check if player is inside guild territory
+        if (!guild.isInside(player.getLocation())) {
+            player.sendMessage(ChatColor.RED + "Musisz byc na terenie swojej gildii!");
+            return;
+        }
+        
+        guild.setHome(player.getLocation());
+        gm.saveGuilds();
+        player.sendMessage(ChatColor.GREEN + "Dom gildii zostal ustawiony na twoja aktualna lokalizacje!");
+    }
+
+    private void assignDeputy(Player player, String targetName) {
+        GuildManager gm = plugin.getGuildManager();
+        GuildManager.Guild guild = gm.getGuildByOwner(player.getUniqueId());
+
+        if (guild == null) {
+            player.sendMessage(ChatColor.RED + "Nie jestes liderem gildii!");
+            return;
+        }
+
+        UUID targetUUID = null;
+        String realName = targetName;
+        for (UUID memberId : guild.getMembers()) {
+            org.bukkit.OfflinePlayer op = org.bukkit.Bukkit.getOfflinePlayer(memberId);
+            if (op.getName() != null && op.getName().equalsIgnoreCase(targetName)) {
+                targetUUID = memberId;
+                realName = op.getName();
+                break;
+            }
+        }
+
+        if (targetUUID == null) {
+            player.sendMessage(ChatColor.RED + "Ten gracz nie jest czlonkiem Twojej gildii!");
+            return;
+        }
+
+        if (targetUUID.equals(player.getUniqueId())) {
+            player.sendMessage(ChatColor.RED + "Nie mozesz nadac zastepcy samemu sobie!");
+            return;
+        }
+
+        if (guild.isDeputy(targetUUID)) {
+            guild.removeDeputy(targetUUID);
+            gm.saveGuilds();
+            player.sendMessage(ChatColor.GREEN + "Odebrales range zastepcy graczowi " + realName + ".");
+            Player targetPlayer = org.bukkit.Bukkit.getPlayer(targetUUID);
+            if (targetPlayer != null) {
+                targetPlayer.sendMessage(ChatColor.RED + "Twoja ranga zastepcy w gildii " + guild.getTag() + " zostala odebrana.");
+            }
+        } else {
+            if (guild.getDeputies().size() >= 2) {
+                player.sendMessage(ChatColor.RED + "Twoja gildia moze miec maksymalnie 2 zastepców!");
+                return;
+            }
+            guild.addDeputy(targetUUID);
+            gm.saveGuilds();
+            player.sendMessage(ChatColor.GREEN + "Nadales range zastepcy graczowi " + realName + ".");
+            Player targetPlayer = org.bukkit.Bukkit.getPlayer(targetUUID);
+            if (targetPlayer != null) {
+                targetPlayer.sendMessage(ChatColor.GREEN + "Zostales mianowany zastepca w gildii " + guild.getTag() + "!");
+            }
+        }
+    }
+
+    private void toggleGuildPvp(Player player) {
+        GuildManager gm = plugin.getGuildManager();
+        GuildManager.Guild guild = gm.getGuildByMember(player.getUniqueId());
+
+        if (guild == null) {
+            player.sendMessage(ChatColor.RED + "Nie posiadasz gildii!");
+            return;
+        }
+
+        if (!guild.getOwner().equals(player.getUniqueId()) && !guild.isDeputy(player.getUniqueId())) {
+            player.sendMessage(ChatColor.RED + "Nie jestes liderem ani zastepca gildii!");
+            return;
+        }
+
+        guild.togglePvp();
+        gm.saveGuilds();
+
+        String status = guild.isPvpEnabled() ? ChatColor.GREEN + "wlaczony (bez dmg/logouta)" : ChatColor.RED + "wylaczony";
+        player.sendMessage(ChatColor.GOLD + "PvP w gildii zostalo: " + status);
+        
+        // Notify members
+        for (UUID memberId : guild.getMembers()) {
+            Player p = org.bukkit.Bukkit.getPlayer(memberId);
+            if (p != null && !p.equals(player)) {
+                p.sendMessage(ChatColor.GOLD + "PvP w gildii zostalo: " + status);
+            }
+        }
     }
 }

@@ -1,6 +1,9 @@
 /home/f/Desktop/mc-server/plugins-source/GildiePlugin/src/main/java/pl/gildie/managers/GuildManager.java
+/home/f/Desktop/mc-server/plugins-source/GildiePlugin/src/main/java/pl/gildie/managers/CombatManager.java
 /home/f/Desktop/mc-server/plugins-source/GildiePlugin/src/main/java/pl/gildie/GildiePlugin.java
+/home/f/Desktop/mc-server/plugins-source/GildiePlugin/src/main/java/pl/gildie/tasks/CombatTask.java
 /home/f/Desktop/mc-server/plugins-source/GildiePlugin/src/main/java/pl/gildie/tasks/GuildTask.java
 /home/f/Desktop/mc-server/plugins-source/GildiePlugin/src/main/java/pl/gildie/commands/GuildCommand.java
 /home/f/Desktop/mc-server/plugins-source/GildiePlugin/src/main/java/pl/gildie/listeners/RegionListener.java
 /home/f/Desktop/mc-server/plugins-source/GildiePlugin/src/main/java/pl/gildie/listeners/GuiListener.java
+/home/f/Desktop/mc-server/plugins-source/GildiePlugin/src/main/java/pl/gildie/listeners/CombatListener.java
