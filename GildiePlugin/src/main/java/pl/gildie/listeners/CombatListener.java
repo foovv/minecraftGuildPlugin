@@ -1,5 +1,8 @@
 package pl.gildie.listeners;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -58,7 +61,7 @@ public class CombatListener implements Listener {
             plugin.getCombatManager().removeTag(player.getUniqueId());
             
             // Broadcast death message
-            org.bukkit.Bukkit.broadcastMessage(org.bukkit.ChatColor.RED + player.getName() + " wylogowal sie podczas walki i zginal!");
+            Bukkit.broadcast(Component.text(player.getName() + " wylogowal sie podczas walki i zginal!", NamedTextColor.RED));
         }
     }
 }

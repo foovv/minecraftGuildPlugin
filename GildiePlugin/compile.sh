@@ -1,22 +1,22 @@
 #!/bin/bash
 
 PLUGIN_NAME="GildiePlugin"
-PAPER_API="/home/f/Desktop/mc-server/libraries/io/papermc/paper/paper-api/1.21.11-R0.1-SNAPSHOT/paper-api-1.21.11-R0.1-SNAPSHOT.jar"
+PAPER_API="c:/Users/g/Desktop/mc-server/libraries/io/papermc/paper/paper-api/1.21.11-R0.1-SNAPSHOT/paper-api-1.21.11-R0.1-SNAPSHOT.jar"
 
 # Build classpath
 CLASSPATH="$PAPER_API"
-CLASSPATH="$CLASSPATH:/home/f/Desktop/mc-server/libraries/com/google/code/gson/gson/2.13.2/gson-2.13.2.jar"
-CLASSPATH="$CLASSPATH:/home/f/Desktop/mc-server/libraries/net/kyori/adventure-api/4.25.0/adventure-api-4.25.0.jar"
-CLASSPATH="$CLASSPATH:/home/f/Desktop/mc-server/libraries/net/kyori/adventure-key/4.25.0/adventure-key-4.25.0.jar"
-CLASSPATH="$CLASSPATH:/home/f/Desktop/mc-server/libraries/net/kyori/adventure-text-serializer-plain/4.25.0/adventure-text-serializer-plain-4.25.0.jar"
-CLASSPATH="$CLASSPATH:/home/f/Desktop/mc-server/libraries/net/kyori/adventure-text-serializer-legacy/4.25.0/adventure-text-serializer-legacy-4.25.0.jar"
-CLASSPATH="$CLASSPATH:/home/f/Desktop/mc-server/libraries/net/md-5/bungeecord-chat/1.21-R0.2-deprecated+build.21/bungeecord-chat-1.21-R0.2-deprecated+build.21.jar"
-CLASSPATH="$CLASSPATH:/home/f/Desktop/mc-server/libraries/net/kyori/examination-api/1.3.0/examination-api-1.3.0.jar"
+CLASSPATH="$CLASSPATH:c:/Users/g/Desktop/mc-server/libraries/com/google/code/gson/gson/2.13.2/gson-2.13.2.jar"
+CLASSPATH="$CLASSPATH:c:/Users/g/Desktop/mc-server/libraries/net/kyori/adventure-api/4.25.0/adventure-api-4.25.0.jar"
+CLASSPATH="$CLASSPATH:c:/Users/g/Desktop/mc-server/libraries/net/kyori/adventure-key/4.25.0/adventure-key-4.25.0.jar"
+CLASSPATH="$CLASSPATH:c:/Users/g/Desktop/mc-server/libraries/net/kyori/adventure-text-serializer-plain/4.25.0/adventure-text-serializer-plain-4.25.0.jar"
+CLASSPATH="$CLASSPATH:c:/Users/g/Desktop/mc-server/libraries/net/kyori/adventure-text-serializer-legacy/4.25.0/adventure-text-serializer-legacy-4.25.0.jar"
+CLASSPATH="$CLASSPATH:c:/Users/g/Desktop/mc-server/libraries/net/md-5/bungeecord-chat/1.21-R0.2-deprecated+build.21/bungeecord-chat-1.21-R0.2-deprecated+build.21.jar"
+CLASSPATH="$CLASSPATH:c:/Users/g/Desktop/mc-server/libraries/net/kyori/examination-api/1.3.0/examination-api-1.3.0.jar"
 
 
-SRC_DIR="/home/f/Desktop/mc-server/plugins-source/GildiePlugin/src"
-BUILD_DIR="/home/f/Desktop/mc-server/plugins-source/GildiePlugin/target"
-OUTPUT_DIR="/home/f/Desktop/mc-server/plugins"
+SRC_DIR="c:/Users/g/Desktop/mc-server/plugins-source/GildiePlugin/src"
+BUILD_DIR="c:/Users/g/Desktop/mc-server/plugins-source/GildiePlugin/target"
+OUTPUT_DIR="c:/Users/g/Desktop/mc-server/plugins"
 
 # Clean and create build directory
 rm -rf "$BUILD_DIR"

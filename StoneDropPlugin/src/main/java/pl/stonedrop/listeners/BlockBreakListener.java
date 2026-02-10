@@ -1,5 +1,6 @@
 package pl.stonedrop.listeners;
 
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
@@ -9,12 +10,18 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
+import pl.stonedrop.managers.LevelManager;
 
 import java.util.Random;
 
 public class BlockBreakListener implements Listener {
 
     private final Random random = new Random();
+    private final LevelManager levelManager;
+
+    public BlockBreakListener(LevelManager levelManager) {
+        this.levelManager = levelManager;
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
@@ -22,7 +29,12 @@ public class BlockBreakListener implements Listener {
         Player player = event.getPlayer();
 
         if (block.getType() == Material.STONE) {
-            // Give XP directly to player
+            // Give XP directly to player (Vanilla) - keeping this? Or replacing with custom XP?
+            // User requested "level kopania" (mining level). Let's keep vanilla XP as is for now, or maybe remove it?
+            // "kazdy wykopany kamien = 1 punkt"
+            
+            levelManager.addXp(player, 1);
+            
             int xp = random.nextInt(3) + 1; // 1-3 XP
             player.giveExp(xp);
             
@@ -53,7 +65,8 @@ public class BlockBreakListener implements Listener {
                         block.getWorld().dropItemNaturally(block.getLocation(), left);
                     }
                 }
-                player.sendMessage("§7[§6Drop§7] §fRuda Zelaza §7x" + amount);
+                levelManager.addXp(player, 2);
+                player.sendMessage(LegacyComponentSerializer.legacySection().deserialize("§7[§6Drop§7] §fRuda Zelaza §7x" + amount + " §8(§a+2 exp§8)"));
             }
 
             // Roll for Gold Ore (1%)
@@ -66,10 +79,12 @@ public class BlockBreakListener implements Listener {
                         block.getWorld().dropItemNaturally(block.getLocation(), left);
                     }
                 }
-                player.sendMessage("§7[§6Drop§7] §eRuda Zlota §7x" + amount);
+                levelManager.addXp(player, 3);
+                player.sendMessage(LegacyComponentSerializer.legacySection().deserialize("§7[§6Drop§7] §eRuda Zlota §7x" + amount + " §8(§a+3 exp§8)"));
             }
         }
     }
+
 
     /**
      * Calculate drop amount based on Fortune level.

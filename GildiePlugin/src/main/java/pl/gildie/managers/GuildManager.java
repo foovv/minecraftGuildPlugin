@@ -7,12 +7,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.UUID;
 
 public class GuildManager {
@@ -30,11 +30,6 @@ public class GuildManager {
         loadGuilds();
     }
 
-    public void createGuild(String tag, String name, UUID owner, Location center) {
-        Guild guild = new Guild(tag, name, owner, center);
-        guilds.add(guild);
-        saveGuilds();
-    }
 
     public Guild getGuildAt(Location loc) {
         for (Guild guild : guilds) {
@@ -114,6 +109,8 @@ public class GuildManager {
         private Double homeX, homeY, homeZ;
         // Guild PvP toggle (friendly fire without damage/antilogout)
         private boolean pvpEnabled = false;
+        // Permissions for members
+        private Map<UUID, Set<GuildPermission>> playerPermissions;
 
         public Guild(String tag, String name, UUID owner, Location center) {
             this.tag = tag;
@@ -130,6 +127,7 @@ public class GuildManager {
             this.homeX = null;
             this.homeY = null;
             this.homeZ = null;
+            this.playerPermissions = new HashMap<>();
         }
         
         public Location getHome() {
@@ -223,6 +221,30 @@ public class GuildManager {
         public boolean isMember(UUID uuid) {
             return getMembers().contains(uuid);
         }
+
+        public boolean hasPermission(UUID uuid, GuildPermission perm) {
+            if (uuid.equals(owner)) return true;
+            if (playerPermissions == null) playerPermissions = new HashMap<>();
+            Set<GuildPermission> perms = playerPermissions.get(uuid);
+            return perms != null && perms.contains(perm);
+        }
+
+        public void togglePermission(UUID uuid, GuildPermission perm) {
+            if (playerPermissions == null) playerPermissions = new HashMap<>();
+            Set<GuildPermission> perms = playerPermissions.computeIfAbsent(uuid, k -> new HashSet<>());
+            if (perms.contains(perm)) {
+                perms.remove(perm);
+            } else {
+                perms.add(perm);
+            }
+        }
+
+        public int getRank(UUID uuid) {
+            if (uuid.equals(owner)) return 3;
+            if (isDeputy(uuid)) return 2;
+            if (isMember(uuid)) return 1;
+            return 0;
+        }
     }
 
     // Map<TargetPlayerUUID, GuildTag>
@@ -249,13 +271,40 @@ public class GuildManager {
         return null;
     }
 
+    private WaypointManager waypointManager;
+
+    public void setWaypointManager(WaypointManager waypointManager) {
+        this.waypointManager = waypointManager;
+    }
+
+    public void createGuild(String tag, String name, UUID owner, Location center) {
+        Guild guild = new Guild(tag, name, owner, center);
+        guilds.add(guild);
+        saveGuilds();
+        
+        if (this.waypointManager != null) {
+            Player ownerPlayer = Bukkit.getPlayer(owner);
+            if (ownerPlayer != null) {
+                this.waypointManager.createWaypoint(ownerPlayer, guild);
+            }
+        }
+    }
+
     public void deleteGuild(Guild guild) {
         // Remove Heart
         Location heartLoc = guild.getCenter().clone();
         heartLoc.setY(35);
         heartLoc.getBlock().setType(Material.AIR);
         
+        if (this.waypointManager != null) {
+            this.waypointManager.removeWaypointsForGuild(guild);
+        }
+        
         guilds.remove(guild);
         saveGuilds();
+    }
+    
+    public List<Guild> getAllGuilds() {
+        return new ArrayList<>(guilds);
     }
 }
