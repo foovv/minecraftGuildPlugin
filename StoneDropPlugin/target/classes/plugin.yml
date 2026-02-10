@@ -6,3 +6,6 @@ commands:
   drop:
     description: Opens the drop menu.
     usage: /drop
+  lvl:
+    description: Shows mining level.
+    usage: /lvl

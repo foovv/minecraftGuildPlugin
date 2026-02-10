@@ -1,7 +1,8 @@
 package com.example.guiplugin;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -18,6 +19,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class GuiPlugin extends JavaPlugin implements Listener {
 
+    private static final Component GUI_TITLE = Component.text("Itemy na gildie", NamedTextColor.GRAY);
+
     @Override
     public void onEnable() {
         getLogger().info("GuiPlugin enabled!");
@@ -32,9 +35,9 @@ public class GuiPlugin extends JavaPlugin implements Listener {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (command.getName().equalsIgnoreCase("g")) {
+        if (command.getName().equalsIgnoreCase("testg")) {
             if (!(sender instanceof Player)) {
-                sender.sendMessage("Only players can use this command!");
+                sender.sendMessage(Component.text("Only players can use this command!", NamedTextColor.RED));
                 return true;
             }
 
@@ -43,13 +46,13 @@ public class GuiPlugin extends JavaPlugin implements Listener {
             // Check for subcommand "itemy"
             if (args.length > 0 && args[0].equalsIgnoreCase("itemy")) {
                 // Create a 27-slot inventory (3 rows)
-                Inventory gui = Bukkit.createInventory(null, 27, ChatColor.GRAY + "Itemy na gildie");
+                Inventory gui = Bukkit.createInventory(null, 27, GUI_TITLE);
 
                 // Create a diamond with custom name "test"
                 ItemStack diamond = new ItemStack(Material.DIAMOND);
                 ItemMeta meta = diamond.getItemMeta();
                 if (meta != null) {
-                    meta.setDisplayName(ChatColor.AQUA + "test");
+                    meta.displayName(Component.text("test", NamedTextColor.AQUA));
                     diamond.setItemMeta(meta);
                 }
 
@@ -61,7 +64,7 @@ public class GuiPlugin extends JavaPlugin implements Listener {
 
                 return true;
             } else {
-                player.sendMessage(ChatColor.RED + "Usage: /g itemy");
+                player.sendMessage(Component.text("Usage: /g itemy", NamedTextColor.RED));
                 return true;
             }
         }
@@ -75,7 +78,7 @@ public class GuiPlugin extends JavaPlugin implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         InventoryView view = event.getView();
         // Check if this is our GUI by title
-        if (view.getTitle().equals(ChatColor.GRAY + "Itemy na gildie")) {
+        if (event.getView().title().equals(GUI_TITLE)) {
             // Cancel the event to prevent item movement
             event.setCancelled(true);
         }
@@ -88,7 +91,7 @@ public class GuiPlugin extends JavaPlugin implements Listener {
     public void onInventoryDrag(InventoryDragEvent event) {
         InventoryView view = event.getView();
         // Check if this is our GUI by title
-        if (view.getTitle().equals(ChatColor.GRAY + "Itemy na gildie")) {
+        if (event.getView().title().equals(GUI_TITLE)) {
             // Cancel the event to prevent item dragging
             event.setCancelled(true);
         }

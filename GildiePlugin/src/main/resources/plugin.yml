@@ -1,11 +1,13 @@
 name: GildiePlugin
 version: 1.0
 main: pl.gildie.GildiePlugin
-api-version: 1.13
+api-version: 1.21
 commands:
   g:
     description: Glowna komenda gildii
     aliases: [gildia, gildie]
+  gamma:
+    description: Ustawia widzenie w ciemnosci dla kazdego
 permissions:
   gildie.use:
     description: Pozwala uzywac komend gildii
