@@ -1,0 +1,103 @@
+C:\Program Files\Java\j
+dk-21.0.10\bin\javac.ex
+e : C:\Users\g\Desktop\
+mc-server\plugins-sourc
+e\StoneDropPlugin\src\m
+ain\java\pl\stonedrop\S
+toneDropPlugin.java:27:
+ error: cannot find 
+symbol
+At line:1 char:1
++ C:\"Program Files"\Ja
+va\jdk-21.0.10\bin\java
+c.exe -d 
+C:\Users\g\Deskt ...
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (C:\Users\g\De   
+ sk...not find symb    
+ol:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+        getServer().get
+PluginManager().registe
+rEvents(new GuiListener
+(dropManager), this);
+                       
+                       
+            ^
+  symbol:   class 
+GuiListener
+  location: class 
+StoneDropPlugin
+C:\Users\g\Desktop\mc-s
+erver\plugins-source\St
+oneDropPlugin\src\main\
+java\pl\stonedrop\Stone
+DropPlugin.java:28: 
+error: cannot find 
+symbol
+        getServer().get
+PluginManager().registe
+rEvents(new BlockBreakL
+istener(levelManager, 
+dropManager), this);
+                       
+                       
+            ^
+  symbol:   class 
+BlockBreakListener
+  location: class 
+StoneDropPlugin
+C:\Users\g\Desktop\mc-s
+erver\plugins-source\St
+oneDropPlugin\src\main\
+java\pl\stonedrop\comma
+nds\DropCommand.java:42
+: warning: 
+[deprecation] createInv
+entory(InventoryHolder,
+int,String) in Bukkit 
+has been deprecated
+        Inventory inv 
+= Bukkit.createInventor
+y(null, 27, 
+"\u00A78Drop z 
+kamienia");
+                       
+       ^
+C:\Users\g\Desktop\mc-s
+erver\plugins-source\St
+oneDropPlugin\src\main\
+java\pl\stonedrop\comma
+nds\DropCommand.java:61
+: warning: 
+[deprecation] 
+setDisplayName(String) 
+in ItemMeta has been 
+deprecated
+            meta.setDis
+playName(name);
+                ^
+C:\Users\g\Desktop\mc-s
+erver\plugins-source\St
+oneDropPlugin\src\main\
+java\pl\stonedrop\comma
+nds\DropCommand.java:70
+: warning: 
+[deprecation] 
+setLore(List<String>) 
+in ItemMeta has been 
+deprecated
+            
+meta.setLore(lore);
+                ^
+2 errors
+3 warnings

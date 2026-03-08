@@ -1,0 +1,4 @@
+name: WorldToolsPlugin
+version: 1.0
+main: pl.worldtools.WorldToolsPlugin
+api-version: '1.21'

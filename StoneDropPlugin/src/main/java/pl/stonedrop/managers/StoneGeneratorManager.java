@@ -33,7 +33,10 @@ public class StoneGeneratorManager {
     public void scheduleRegeneration(Location location) {
         // 30 ticks = 1.5 seconds
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-            location.getBlock().setType(Material.STONE);
+            Material type = location.getBlock().getType();
+            if (type == Material.AIR || type == Material.CAVE_AIR || type == Material.VOID_AIR) {
+                location.getBlock().setType(Material.STONE);
+            }
         }, 30L);
     }
 }
