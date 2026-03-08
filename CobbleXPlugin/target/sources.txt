@@ -1,0 +1,4 @@
+C:\Users\g\Desktop\mc-server\plugins-source\CobbleXPlugin\src\main\java\pl\cobblex\CobbleXPlugin.java
+C:\Users\g\Desktop\mc-server\plugins-source\CobbleXPlugin\src\main\java\pl\cobblex\commands\CxCommand.java
+C:\Users\g\Desktop\mc-server\plugins-source\CobbleXPlugin\src\main\java\pl\cobblex\commands\RepairCommand.java
+C:\Users\g\Desktop\mc-server\plugins-source\CobbleXPlugin\src\main\java\pl\cobblex\listeners\CxListener.java

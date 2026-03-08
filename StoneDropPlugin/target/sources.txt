@@ -4,5 +4,7 @@ C:\Users\g\Desktop\mc-server\plugins-source\StoneDropPlugin\src\main\java\pl\sto
 C:\Users\g\Desktop\mc-server\plugins-source\StoneDropPlugin\src\main\java\pl\stonedrop\listeners\BlockBreakListener.java
 C:\Users\g\Desktop\mc-server\plugins-source\StoneDropPlugin\src\main\java\pl\stonedrop\listeners\GuiListener.java
 C:\Users\g\Desktop\mc-server\plugins-source\StoneDropPlugin\src\main\java\pl\stonedrop\listeners\StoneGeneratorListener.java
+C:\Users\g\Desktop\mc-server\plugins-source\StoneDropPlugin\src\main\java\pl\stonedrop\managers\DropManager.java
+C:\Users\g\Desktop\mc-server\plugins-source\StoneDropPlugin\src\main\java\pl\stonedrop\managers\DropSettings.java
 C:\Users\g\Desktop\mc-server\plugins-source\StoneDropPlugin\src\main\java\pl\stonedrop\managers\LevelManager.java
 C:\Users\g\Desktop\mc-server\plugins-source\StoneDropPlugin\src\main\java\pl\stonedrop\managers\StoneGeneratorManager.java

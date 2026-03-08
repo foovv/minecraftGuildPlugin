@@ -15,12 +15,23 @@ import pl.gildie.managers.GuildManager;
 import pl.gildie.managers.GuildManager.Guild;
 import pl.gildie.managers.GuildPermission;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class RegionListener implements Listener {
 
     private final GildiePlugin plugin;
+    private final Set<Location> temporaryEnemyWaters = new HashSet<>();
 
     public RegionListener(GildiePlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void onBlockFromTo(org.bukkit.event.block.BlockFromToEvent event) {
+        if (temporaryEnemyWaters.contains(event.getBlock().getLocation())) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -99,8 +110,26 @@ public class RegionListener implements Listener {
                 event.setCancelled(true);
                 player.sendMessage(Component.text("Nie posiadasz uprawnien do wylewania tego plynu!", NamedTextColor.RED));
             } else {
-                event.setCancelled(true);
-                player.sendMessage(Component.text("To teren wrogiej gildii: [" + guild.getTag() + "]", NamedTextColor.RED));
+                if (event.getBucket() == Material.WATER_BUCKET) {
+                    org.bukkit.block.Block placedBlock = event.getBlockClicked().getRelative(event.getBlockFace());
+                    Location loc = placedBlock.getLocation();
+                    temporaryEnemyWaters.add(loc);
+                    
+                    org.bukkit.Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                        if (temporaryEnemyWaters.remove(loc)) {
+                            if (placedBlock.getType() == Material.WATER) {
+                                placedBlock.setType(Material.AIR);
+                            }
+                            if (player.isOnline()) {
+                                player.getInventory().removeItem(new org.bukkit.inventory.ItemStack(Material.BUCKET, 1));
+                                player.getInventory().addItem(new org.bukkit.inventory.ItemStack(Material.WATER_BUCKET, 1));
+                            }
+                        }
+                    }, 40L);
+                } else {
+                    event.setCancelled(true);
+                    player.sendMessage(Component.text("To teren wrogiej gildii: [" + guild.getTag() + "]", NamedTextColor.RED));
+                }
             }
         }
     }

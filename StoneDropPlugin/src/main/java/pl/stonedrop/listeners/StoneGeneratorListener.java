@@ -32,10 +32,13 @@ public class StoneGeneratorListener implements Listener {
 
         Player player = event.getPlayer();
         
+        if (event.getItem() != null && event.getItem().getType().isBlock()) return;
+
+        
         boolean enabled = generatorManager.toggleGenerator(player.getUniqueId());
         
         if (enabled) {
-            player.sendMessage(Component.text("Tryb stoniarki wlaczony! (Kazdy wykopany kamien sie odnowi)", NamedTextColor.GREEN));
+            player.sendMessage(Component.text("Tryb stoniarki wlaczony!", NamedTextColor.GREEN));
         } else {
             player.sendMessage(Component.text("Tryb stoniarki wylaczony!", NamedTextColor.RED));
         }

@@ -1,0 +1,11 @@
+name: CobbleXPlugin
+version: 1.0
+main: pl.cobblex.CobbleXPlugin
+api-version: '1.21'
+commands:
+  cx:
+    description: Wymienia 12 stackow cobbla na cobblex
+    usage: /cx
+  naprawkilof:
+    description: Naprawia kilof w dloni za 15 leveli expa
+    usage: /naprawkilof

@@ -14,13 +14,17 @@ import pl.stonedrop.managers.LevelManager;
 
 import java.util.Random;
 
+import pl.stonedrop.managers.DropManager;
+
 public class BlockBreakListener implements Listener {
 
     private final Random random = new Random();
     private final LevelManager levelManager;
+    private final DropManager dropManager;
 
-    public BlockBreakListener(LevelManager levelManager) {
+    public BlockBreakListener(LevelManager levelManager, DropManager dropManager) {
         this.levelManager = levelManager;
+        this.dropManager = dropManager;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -29,9 +33,7 @@ public class BlockBreakListener implements Listener {
         Player player = event.getPlayer();
 
         if (block.getType() == Material.STONE) {
-            // Give XP directly to player (Vanilla) - keeping this? Or replacing with custom XP?
-            // User requested "level kopania" (mining level). Let's keep vanilla XP as is for now, or maybe remove it?
-            // "kazdy wykopany kamien = 1 punkt"
+            pl.stonedrop.managers.DropSettings settings = dropManager.getSettings(player);
             
             levelManager.addXp(player, 1);
             
@@ -39,10 +41,12 @@ public class BlockBreakListener implements Listener {
             player.giveExp(xp);
             
             // Give Cobblestone directly to player
-            ItemStack cobble = new ItemStack(Material.COBBLESTONE);
-            java.util.Map<Integer, ItemStack> leftoverCobble = player.getInventory().addItem(cobble);
-            if (!leftoverCobble.isEmpty()) {
-                block.getWorld().dropItemNaturally(block.getLocation(), cobble);
+            if (settings.isCobbleEnabled()) {
+                ItemStack cobble = new ItemStack(Material.COBBLESTONE);
+                java.util.Map<Integer, ItemStack> leftoverCobble = player.getInventory().addItem(cobble);
+                if (!leftoverCobble.isEmpty()) {
+                    block.getWorld().dropItemNaturally(block.getLocation(), cobble);
+                }
             }
             
             // Prevent natural cobblestone drop
@@ -56,7 +60,7 @@ public class BlockBreakListener implements Listener {
             }
 
             // Roll for Iron Ore (2%)
-            if (random.nextDouble() * 100 <= 2.0) {
+            if (settings.isIronEnabled() && random.nextDouble() * 100 <= 2.0) {
                 int amount = calculateDropAmount(fortuneLevel);
                 ItemStack iron = new ItemStack(Material.IRON_ORE, amount);
                 java.util.Map<Integer, ItemStack> leftover = player.getInventory().addItem(iron);
@@ -70,7 +74,7 @@ public class BlockBreakListener implements Listener {
             }
 
             // Roll for Gold Ore (1%)
-            if (random.nextDouble() * 100 <= 1.0) {
+            if (settings.isGoldEnabled() && random.nextDouble() * 100 <= 1.0) {
                 int amount = calculateDropAmount(fortuneLevel);
                 ItemStack gold = new ItemStack(Material.GOLD_ORE, amount);
                 java.util.Map<Integer, ItemStack> leftover = player.getInventory().addItem(gold);
